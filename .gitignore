@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+backend/.venv/
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+coverage.xml
+htmlcov/
+
+# MySQL local data (preserve repository size and local data independence)
+backend/data/mysql/
+
+# Uploads (except placeholder/demo)
+backend/uploads/*
+!backend/uploads/demo/
+!backend/uploads/demo/**
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# Node / Frontend
+node_modules/
+.npm
+coverage/
+
+# IDE / System
+.vscode/
+.idea/
+*.swp
+*.swo
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Duplicate demo images at the workspace root; canonical copies live in backend/uploads/demo/
+/book_stastionary .png
+/earpods_electronic .png
+/headhones_electronic .png
