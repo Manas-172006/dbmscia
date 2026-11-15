@@ -293,6 +293,9 @@ def seed_database(reset: bool = False):
         admin_email = settings.ADMIN_EMAIL.lower()
         admin_user = db.query(User).filter(User.email == admin_email).first()
         if not admin_user:
+            # Fall back to the existing admin-role account if the email changed.
+            admin_user = db.query(User).filter(User.role == "admin").first()
+        if not admin_user:
             admin_user = User(
                 full_name="Found It Administrator",
                 email=admin_email,
@@ -307,7 +310,14 @@ def seed_database(reset: bool = False):
             db.refresh(admin_user)
             print(f"Created Admin account: {admin_email}")
         else:
-            print(f"Admin account already exists: {admin_email}")
+            # Keep admin credentials in sync with .env on every seed run so a
+            # password change there is applied instead of being silently ignored.
+            admin_user.email = admin_email
+            admin_user.password_hash = get_password_hash(settings.ADMIN_PASSWORD)
+            admin_user.role = "admin"
+            admin_user.is_active = True
+            db.commit()
+            print(f"Admin account synced with .env credentials: {admin_email}")
 
         # 2. Seed Categories & Subcategories
         category_map = {}

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
-    ADMIN_EMAIL: str = "manasteam@gmail.com"
+    ADMIN_EMAIL: str = "admin@example.com"
     ADMIN_PASSWORD: str
     UPLOAD_DIR: str = "uploads"
     MAX_UPLOAD_SIZE_MB: int = 5
