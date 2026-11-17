@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     MYSQL_URL: Optional[str] = None
     MYSQL_PRIVATE_URL: Optional[str] = None
     MYSQL_PUBLIC_URL: Optional[str] = None
+    MYSQLHOST: Optional[str] = None
+    MYSQLPORT: Optional[int] = None
+    MYSQLUSER: Optional[str] = None
+    MYSQLPASSWORD: Optional[str] = None
+    MYSQLDATABASE: Optional[str] = None
     SQL_EXPLORER_DATABASE_URL: Optional[str] = None
     JWT_SECRET_KEY: str = "5b0a2fa64ac8ee99be03683a57567177120930bb6bcaf1cf00aee418a314f418"
     JWT_ALGORITHM: str = "HS256"
@@ -42,6 +47,13 @@ class Settings(BaseSettings):
                 self.MYSQL_URL
                 or self.MYSQL_PRIVATE_URL
                 or self.MYSQL_PUBLIC_URL
+            )
+        if not self.DATABASE_URL and self.MYSQLHOST and self.MYSQLUSER:
+            port = self.MYSQLPORT or 3306
+            pwd = f":{self.MYSQLPASSWORD}" if self.MYSQLPASSWORD else ""
+            db = f"/{self.MYSQLDATABASE}" if self.MYSQLDATABASE else ""
+            self.DATABASE_URL = (
+                f"mysql+pymysql://{self.MYSQLUSER}{pwd}@{self.MYSQLHOST}:{port}{db}"
             )
         if not self.DATABASE_URL:
             # Fallback to local default if nothing supplied
