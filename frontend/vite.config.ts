@@ -11,4 +11,12 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 5173,
   },
+  build: {
+    // Ensure assets are always hashed for cache busting on Render/Vercel
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
 })

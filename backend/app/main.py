@@ -16,6 +16,7 @@ app = FastAPI(
 
 # CORS configuration
 origins = [
+    settings.FRONTEND_ORIGIN.rstrip("/"),
     settings.FRONTEND_ORIGIN,
     "http://localhost:5173",
     "http://127.0.0.1:5173",

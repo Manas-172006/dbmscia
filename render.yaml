@@ -1,0 +1,54 @@
+services:
+  # ── Backend (FastAPI) ─────────────────────────────────────────────────
+  - type: web
+    name: found-it-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m alembic upgrade head && python -m app.db.seed && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: Found It API
+      - key: DATABASE_URL
+        sync: false          # paste from Railway MySQL → set manually in Render dashboard
+      - key: SQL_EXPLORER_DATABASE_URL
+        sync: false          # same Railway host, different user (see deployment guide)
+      - key: JWT_SECRET_KEY
+        sync: false          # generate with: python -c "import secrets; print(secrets.token_hex(32))"
+      - key: ADMIN_EMAIL
+        value: admin@foundit.app
+      - key: ADMIN_PASSWORD
+        sync: false          # set a strong password in Render dashboard
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "5"
+      - key: FRONTEND_ORIGIN
+        sync: false          # set to your Render frontend URL after it deploys, e.g. https://found-it.onrender.com
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "1440"
+
+  # ── Frontend (React/Vite — served as static site) ─────────────────────
+  - type: web
+    name: found-it-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    plan: free
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false          # set to your Render backend URL, e.g. https://found-it-backend.onrender.com/api
+      - key: VITE_UPLOADS_BASE_URL
+        sync: false          # set to https://found-it-backend.onrender.com/uploads

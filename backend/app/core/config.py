@@ -1,5 +1,6 @@
 import os
 from typing import List, Optional
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -16,6 +17,13 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "uploads"
     MAX_UPLOAD_SIZE_MB: int = 5
     FRONTEND_ORIGIN: str = "http://localhost:5173"
+
+    @field_validator("DATABASE_URL", "SQL_EXPLORER_DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_mysql_scheme(cls, v: Optional[str]) -> Optional[str]:
+        if isinstance(v, str) and v.startswith("mysql://"):
+            return v.replace("mysql://", "mysql+pymysql://", 1)
+        return v
 
     model_config = SettingsConfigDict(
         env_file=".env",
